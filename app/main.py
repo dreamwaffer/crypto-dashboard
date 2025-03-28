@@ -1,19 +1,19 @@
 from fastapi import FastAPI
-from app.api.endpoints import health
+from app.api import api_router
 from app.core.settings import settings
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
-app.include_router(health.router, prefix=settings.API_V1_STR)
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def root():
     """
     Root endpoint with a pointer to API docs.
     """
-    return {"message": "Vítejte v Cryptocurrency API. Dokumentaci najdete na /docs."}
+    return {"message": "Welcome to Cryptocurrency API. Documentation can be found at /docs."}
 
 
 if __name__ == "__main__":
