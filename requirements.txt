@@ -1,0 +1,29 @@
+# Web framework
+fastapi>=0.95.0
+uvicorn>=0.22.0
+
+# DB
+sqlalchemy>=2.0.0
+alembic>=1.10.0
+psycopg2-binary>=2.9.5
+redis>=4.5.0
+
+# Async tasks
+celery>=5.2.7
+
+# HTTP client
+httpx>=0.24.0
+
+# Loading env
+python-dotenv>=1.0.0
+
+# Utils
+pydantic>=1.10.0
+pydantic-settings>=2.0.0
+pytz>=2023.3
+
+# Dev and Test
+pytest>=7.3.0
+black>=23.3.0
+flake8>=6.0.0
+isort>=5.12.0
