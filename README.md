@@ -1,26 +1,33 @@
 # Crypto Dashboard API
 
-Toto API slouží ke správě seznamu kryptoměn, získávání jejich aktuálních cen a metadat pomocí CoinGecko API a ukládání těchto informací do databáze.
+This API is used to manage a list of cryptocurrencies, fetch their current prices and metadata via the CoinGecko API, and store this information in a database.
 
-## Funkce
+## Features
 
-*   Přidávání, čtení, aktualizace a mazání (CRUD) záznamů o kryptoměnách.
-*   Automatické ověření symbolu a získání základních dat (název, ID) z CoinGecko při přidání.
-*   Ukládání metadat (aktuální cena, obrázek) do databáze.
-*   Asynchronní úloha pro pravidelnou aktualizaci cen.
+*   Create, Read, Update, and Delete (CRUD) operations for cryptocurrency records.
+*   Automatic symbol validation and fetching of basic data (name, ID) from CoinGecko when adding a cryptocurrency.
+*   Storing metadata (current price, image) in the database.
+*   Asynchronous task for periodic price updates.
 
-## Požadavky
+## Requirements
 
 *   Docker
 *   Docker Compose
 
-## Spuštění
-1.  **Spusťte pomocí Docker Compose:** V terminálu přejděte do adresáře `crypto_api` a spusťte:
+## Running
+
+1.  **Run using Docker Compose:** In your terminal, navigate to the `crypto_api` directory and run:
     ```bash
     docker-compose up -d --build
     ```
-    *   `-d` spustí kontejnery na pozadí.
-    *   `--build` zajistí sestavení image, pokud ještě neexistuje nebo pokud se změnily závislosti.
 
-   2.  **API bude dostupné na:** `http://localhost:8000`
-   3.  **Interaktivní dokumentace (Swagger UI):** `http://localhost:8000/docs`
+2.  **The API will be available at:** `http://localhost:8000`
+
+3.  **Interactive documentation (Swagger UI):** `http://localhost:8000/docs`
+
+## Tests
+
+1.  In your terminal, navigate to the root of this project and run:
+    ```bash
+    pytest
+    ```
