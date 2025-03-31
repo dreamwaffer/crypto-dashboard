@@ -24,7 +24,7 @@ def create_cryptocurrency(
     """
     symbol_upper = crypto_in.symbol.upper()
 
-    db_crypto = crud_crypto.get_crypto_by_symbol(db, symbol=symbol_upper)
+    db_crypto = crud_crypto.get_crypto(db, symbol=symbol_upper)
     if db_crypto:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -50,7 +50,7 @@ def create_cryptocurrency(
 
     coin_metadata = {}
     prices = coingecko.get_prices(coingecko_ids=[coingecko_id], vs_currency="usd")
-    logger.debug(f"Received prices from CoinGecko: {prices}") # Changed print to debug
+
     if coingecko_id in prices and "usd" in prices[coingecko_id]:
         coin_metadata["current_price_usd"] = prices[coingecko_id]["usd"]
 
@@ -92,7 +92,7 @@ def read_cryptocurrency(
     Get a specific cryptocurrency by its symbol.
     """
 
-    db_crypto = crud_crypto.get_crypto_by_symbol(db, symbol=symbol)
+    db_crypto = crud_crypto.get_crypto(db, symbol=symbol)
     if not db_crypto:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -112,7 +112,7 @@ def update_cryptocurrency(
     Update a cryptocurrency by its symbol (only supports updating note).
     """
 
-    db_crypto = crud_crypto.get_crypto_by_symbol(db, symbol=symbol)
+    db_crypto = crud_crypto.get_crypto(db, symbol=symbol)
     if not db_crypto:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -133,13 +133,13 @@ def delete_cryptocurrency(
     Delete a cryptocurrency by its symbol.
     """
 
-    db_crypto = crud_crypto.get_crypto_by_symbol(db, symbol=symbol)
+    db_crypto = crud_crypto.get_crypto(db, symbol=symbol)
     if not db_crypto:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Cryptocurrency with symbol '{symbol}' not found",
         )
 
-    deleted_crypto = crud_crypto.delete_crypto(db=db, crypto_id=db_crypto.id)
+    deleted_crypto = crud_crypto.delete_crypto(db=db, symbol=db_crypto.symbol)
 
     return deleted_crypto

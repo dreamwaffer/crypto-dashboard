@@ -7,12 +7,7 @@ from app.db import models
 from app.schemas import crypto as crypto_schemas
 
 
-def get_crypto(db: Session, crypto_id: int) -> Optional[models.Cryptocurrency]:
-    """Gets a single cryptocurrency by its database ID."""
-    return db.query(models.Cryptocurrency).filter(models.Cryptocurrency.id == crypto_id).first()
-
-
-def get_crypto_by_symbol(db: Session, symbol: str) -> Optional[models.Cryptocurrency]:
+def get_crypto(db: Session, symbol: str) -> Optional[models.Cryptocurrency]:
     """Gets a single cryptocurrency by its symbol (case-insensitive search)."""
     return db.query(models.Cryptocurrency).filter(models.Cryptocurrency.symbol.ilike(symbol)).first()
 
@@ -90,9 +85,9 @@ def update_crypto_metadata_batch(db: Session, updates: Dict[str, Dict[str, Any]]
     return updated_count
 
 
-def delete_crypto(db: Session, crypto_id: int) -> Optional[models.Cryptocurrency]:
+def delete_crypto(db: Session, symbol: str) -> Optional[models.Cryptocurrency]:
     """Deletes a cryptocurrency record by its ID."""
-    db_obj = db.query(models.Cryptocurrency).filter(models.Cryptocurrency.id == crypto_id).first()
+    db_obj = db.query(models.Cryptocurrency).filter(models.Cryptocurrency.symbol == symbol).first()
     if db_obj:
         db.delete(db_obj)
         db.commit()

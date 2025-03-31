@@ -15,17 +15,13 @@ def search_coin(symbol: str) -> Optional[Tuple[str, str]]:
     Returns a tuple (coingecko_id, name) if found and matches the symbol closely, otherwise None.
     """
     try:
-
         response = sync_client.get("/search", params={"query": symbol})
         response.raise_for_status()
         data = response.json()
 
         if data and "coins" in data and data["coins"]:
-
             for coin in data["coins"]:
-
                 if coin.get("symbol", "").lower() == symbol.lower():
-
                     coingecko_id = coin.get("api_symbol", coin.get("id"))
                     if coingecko_id and coin.get("name"):
                         return coingecko_id, coin["name"]

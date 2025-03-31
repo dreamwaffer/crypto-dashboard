@@ -30,12 +30,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-if settings.DATABASE_URL is None:
-    settings.DATABASE_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_SERVER}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
-
-if settings.CELERY_BROKER_URL is None:
-    settings.CELERY_BROKER_URL = f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/0"
-
-if settings.CELERY_RESULT_BACKEND is None:
-    settings.CELERY_RESULT_BACKEND = f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/1"

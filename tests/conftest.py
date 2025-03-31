@@ -31,19 +31,19 @@ def create_test_database():
     """
     Creates the database tables once per test session.
     """
-
     Base.metadata.create_all(bind=engine)
-    yield
+    try:
+        yield
+    finally:
+        Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(scope="function")
 def db_session() -> Generator[Session, Any, None]:
     """
     Provides a clean database session for each test function.
-    Manages transactions and ensures tables are dropped after each test.
+    Manages transactions and ensures data isolation between tests.
     """
-
-    Base.metadata.create_all(bind=engine)
     connection = engine.connect()
     transaction = connection.begin()
     db = TestingSessionLocal(bind=connection)
@@ -54,8 +54,6 @@ def db_session() -> Generator[Session, Any, None]:
         db.close()
         transaction.rollback()
         connection.close()
-
-        Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture(scope="function", autouse=True)

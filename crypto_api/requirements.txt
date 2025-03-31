@@ -4,7 +4,7 @@ sqlalchemy
 psycopg2-binary
 pydantic
 pydantic-settings
-pytest  # Added for testing
+pytest
 python-dotenv
 httpx
 celery[redis]

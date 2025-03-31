@@ -35,8 +35,8 @@ def mock_coingecko_prices():
     """Mocks coingecko.get_prices to return predefined prices."""
     with patch("app.api.routers.crypto.coingecko.get_prices") as mock_prices:
         mock_prices.return_value = {
-            "bitcoin": {"usd": 50000.0},
-            "ethereum": {"usd": 4000.0},
+            "bitcoin": {"usd": 100000.0},
+            "ethereum": {"usd": 2000.0},
         }
         yield mock_prices
 
@@ -60,7 +60,7 @@ def test_crypto_btc(db_session: Session) -> models.Cryptocurrency:
         symbol="BTC",
         name="Bitcoin",
         coingecko_id="bitcoin",
-        coin_metadata={"current_price_usd": 50000.0, "image": {"thumb": "...", "small": "...", "large": "..."}},
+        coin_metadata={"current_price_usd": 100000.0, "image": {"thumb": "...", "small": "...", "large": "..."}},
         note="Test BTC"
     )
 
@@ -73,7 +73,7 @@ def test_crypto_eth(db_session: Session) -> models.Cryptocurrency:
         symbol="ETH",
         name="Ethereum",
         coingecko_id="ethereum",
-        coin_metadata={"current_price_usd": 4000.0, "image": {"thumb": "...", "small": "...", "large": "..."}},
+        coin_metadata={"current_price_usd": 2000.0, "image": {"thumb": "...", "small": "...", "large": "..."}},
         note="Test ETH"
     )
 
@@ -91,14 +91,14 @@ def test_create_cryptocurrency_success(client: TestClient, db_session: Session, 
     assert data["coingecko_id"] == "ethereum"
     assert data["note"] == "My Ethereum"
     assert "current_price_usd" in data["coin_metadata"]
-    assert data["coin_metadata"]["current_price_usd"] == 4000.0
+    assert data["coin_metadata"]["current_price_usd"] == 2000.0
     assert "image" in data["coin_metadata"]
 
     mock_coingecko_search.assert_called_once_with(symbol="ETH")
     mock_coingecko_prices.assert_called_once_with(coingecko_ids=["ethereum"], vs_currency="usd")
     mock_coingecko_details.assert_called_once_with(coingecko_id="ethereum")
 
-    db_obj = crud_crypto.get_crypto_by_symbol(db_session, symbol="ETH")
+    db_obj = crud_crypto.get_crypto(db_session, symbol="ETH")
     assert db_obj is not None
     assert db_obj.symbol == "ETH"
     assert db_obj.name == "Ethereum"
@@ -201,7 +201,7 @@ def test_delete_cryptocurrency_success(client: TestClient, test_crypto_btc: mode
     assert data["symbol"] == test_crypto_btc.symbol
     assert data["id"] == test_crypto_btc.id
 
-    db_obj = crud_crypto.get_crypto(db_session, crypto_id=test_crypto_btc.id)
+    db_obj = crud_crypto.get_crypto(db_session, symbol=test_crypto_btc.symbol)
     assert db_obj is None
 
 

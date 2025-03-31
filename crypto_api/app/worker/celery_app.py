@@ -19,7 +19,6 @@ celery_app.conf.update(
         'update-crypto-prices-every-30-mins': {
             'task': 'app.worker.tasks.update_all_crypto_prices',
             'schedule': 60.0,
-
         },
     },
 )
