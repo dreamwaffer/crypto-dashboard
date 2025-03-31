@@ -1,7 +1,10 @@
+import logging
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.services import coingecko
+from app.db.base import Base, engine, SessionLocal
+from app.crud import crud_crypto
 from app.core.config import settings
 from app.api.routers import crypto as crypto_router
 from app.services import coingecko
@@ -9,13 +12,17 @@ from app.db.base import Base, engine, SessionLocal
 from app.crud import crud_crypto
 from app.db import models
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(name)s: %(message)s')
+logger = logging.getLogger(__name__)
+
 
 def create_db_and_tables():
     try:
         Base.metadata.create_all(bind=engine)
-        print("Database tables created or already exist.")
+        logger.info("Database tables created or already exist.")
     except Exception as e:
-        print(f"Error creating database tables: {e}")
+        logger.error(f"Error creating database tables: {e}", exc_info=True)
 
 
 def seed_db():
@@ -24,15 +31,15 @@ def seed_db():
     try:
         count = db.query(models.Cryptocurrency).count()
         if count == 0:
-            print("Database is empty, seeding initial data...")
+            logger.info("Database is empty, seeding initial data...")
             initial_symbols = ["BTC", "ETH"]
             for symbol in initial_symbols:
                 try:
-                    print(f"Attempting to seed {symbol}...")
+                    logger.info(f"Attempting to seed {symbol}...")
 
                     existing = crud_crypto.get_crypto_by_symbol(db, symbol=symbol)
                     if existing:
-                        print(f"{symbol} already exists, skipping seed.")
+                        logger.info(f"{symbol} already exists, skipping seed.")
                         continue
 
                     search_result = coingecko.search_coin(symbol=symbol)
@@ -54,28 +61,28 @@ def seed_db():
                             coin_metadata=coin_metadata,
                             note=f"Initial seed for {symbol}"
                         )
-                        print(f"Successfully seeded {symbol}")
+                        logger.info(f"Successfully seeded {symbol}")
                     else:
-                        print(f"Could not find {symbol} on CoinGecko during seeding.")
+                        logger.warning(f"Could not find {symbol} on CoinGecko during seeding.")
                 except Exception as seed_error:
-                    print(f"Error seeding {symbol}: {seed_error}")
+                    logger.error(f"Error seeding {symbol}: {seed_error}", exc_info=True)
                     db.rollback()
-            print("Initial data seeding complete.")
+            logger.info("Initial data seeding complete.")
         else:
-            print(f"Database contains {count} records, skipping seeding.")
+            logger.info(f"Database contains {count} records, skipping seeding.")
     finally:
         db.close()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Application startup...")
+    logger.info("Application startup...")
     create_db_and_tables()
     seed_db()
 
     yield
 
-    print("Application shutdown...")
+    logger.info("Application shutdown...")
 
 
 app = FastAPI(

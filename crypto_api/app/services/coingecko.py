@@ -1,7 +1,10 @@
 import httpx
+import logging
 from typing import Optional, Dict, Any, List, Tuple
 
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 sync_client = httpx.Client(base_url=settings.COINGECKO_API_BASE_URL, timeout=10.0)
 
@@ -28,13 +31,11 @@ def search_coin(symbol: str) -> Optional[Tuple[str, str]]:
                         return coingecko_id, coin["name"]
 
     except httpx.HTTPStatusError as e:
-        print(f"HTTP error searching for coin {symbol}: {e.response.status_code} - {e.response.text}")
-
+        logger.error(f"HTTP error searching for coin {symbol}: {e.response.status_code} - {e.response.text}")
     except httpx.RequestError as e:
-        print(f"Request error searching for coin {symbol}: {e}")
+        logger.error(f"Request error searching for coin {symbol}: {e}")
     except Exception as e:
-        print(f"Unexpected error searching for coin {symbol}: {e}")
-
+        logger.exception(f"Unexpected error searching for coin {symbol}: {e}")
     return None
 
 
@@ -64,11 +65,11 @@ def get_coin_details(coingecko_id: str) -> Optional[Dict[str, Any]]:
             "image": data.get("image", {}).get("large")
         }
     except httpx.HTTPStatusError as e:
-        print(f"HTTP error getting details for {coingecko_id}: {e.response.status_code} - {e.response.text}")
+        logger.error(f"HTTP error getting details for {coingecko_id}: {e.response.status_code} - {e.response.text}")
     except httpx.RequestError as e:
-        print(f"Request error getting details for {coingecko_id}: {e}")
+        logger.error(f"Request error getting details for {coingecko_id}: {e}")
     except Exception as e:
-        print(f"Unexpected error getting details for {coingecko_id}: {e}")
+        logger.exception(f"Unexpected error getting details for {coingecko_id}: {e}")
     return None
 
 
@@ -94,9 +95,9 @@ def get_prices(coingecko_ids: List[str], vs_currency: str = "usd") -> Dict[str, 
         data = response.json()
         return data
     except httpx.HTTPStatusError as e:
-        print(f"HTTP error getting prices for {coingecko_ids}: {e.response.status_code} - {e.response.text}")
+        logger.error(f"HTTP error getting prices for {coingecko_ids}: {e.response.status_code} - {e.response.text}")
     except httpx.RequestError as e:
-        print(f"Request error getting prices for {coingecko_ids}: {e}")
+        logger.error(f"Request error getting prices for {coingecko_ids}: {e}")
     except Exception as e:
-        print(f"Unexpected error getting prices for {coingecko_ids}: {e}")
+        logger.exception(f"Unexpected error getting prices for {coingecko_ids}: {e}")
     return {}

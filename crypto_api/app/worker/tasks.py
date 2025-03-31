@@ -6,7 +6,6 @@ from app.db.base import SessionLocal
 from app.crud import crud_crypto
 from app.services import coingecko
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +28,7 @@ def update_all_crypto_prices():
         logger.info(f"Found {len(coingecko_ids)} coingecko_ids to update prices for.")
 
         prices_data = coingecko.get_prices(coingecko_ids=coingecko_ids, vs_currency="usd")
-        print(prices_data)
+        logger.debug(f"Received prices data: {prices_data}") # Changed print to debug
 
         if not prices_data:
             logger.warning("Received no price data from CoinGecko.")

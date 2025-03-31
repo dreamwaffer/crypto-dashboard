@@ -1,13 +1,14 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import List, Any
-
 from app.db import models
 from app.schemas import crypto as crypto_schemas
 from app.crud import crud_crypto
 from app.services import coingecko
 from app.db.base import get_db
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -49,7 +50,7 @@ def create_cryptocurrency(
 
     coin_metadata = {}
     prices = coingecko.get_prices(coingecko_ids=[coingecko_id], vs_currency="usd")
-    print(prices)
+    logger.debug(f"Received prices from CoinGecko: {prices}") # Changed print to debug
     if coingecko_id in prices and "usd" in prices[coingecko_id]:
         coin_metadata["current_price_usd"] = prices[coingecko_id]["usd"]
 
