@@ -1,6 +1,6 @@
 # Crypto Dashboard API
 
-This API is used to manage a list of cryptocurrencies, fetch their current prices and metadata via the CoinGecko API, and store this information in a database.
+This project is my solution to a task given to me by a potentional employer to prove my skills. This API is used to manage a list of cryptocurrencies, fetch their current prices and metadata via the CoinGecko API, and store this information in a database.
 
 ## Features
 
